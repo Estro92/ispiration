@@ -1,6 +1,5 @@
 import {
 	AbsoluteFill,
-	Img,
 	interpolate,
 	staticFile,
 	useCurrentFrame,
@@ -12,40 +11,27 @@ export const Scene03: React.FC = () => {
 	const frame = useCurrentFrame();
 	const { durationInFrames } = useVideoConfig();
 
-	// Darkness holds briefly, then the box fades back in, perfectly still (no push-in this time).
-	const boxOpacity = interpolate(frame, [10, 40], [0, 1], {
+	const glowPulse = interpolate(Math.sin(frame / 20), [-1, 1], [0.35, 0.75]);
+
+	const logoOpacity = interpolate(frame, [10, 40], [0, 1], {
+		extrapolateLeft: "clamp",
+		extrapolateRight: "clamp",
+	});
+	const logoScale = interpolate(frame, [10, 45], [0.7, 1], {
 		extrapolateLeft: "clamp",
 		extrapolateRight: "clamp",
 	});
 
-	const glowPulse = interpolate(Math.sin(frame / 20), [-1, 1], [0.35, 0.7]);
-
-	// Mask Scene 01's baked-in text, same technique as Scene 02.
-	const maskOpacity = interpolate(frame, [10, 35], [0, 1], {
+	const titleOpacity = interpolate(frame, [45, 70], [0, 1], {
 		extrapolateLeft: "clamp",
 		extrapolateRight: "clamp",
 	});
 
-	const titleOpacity = interpolate(frame, [45, 75], [0, 1], {
+	const ctaOpacity = interpolate(frame, [70, 95], [0, 1], {
 		extrapolateLeft: "clamp",
 		extrapolateRight: "clamp",
 	});
-	const titleScale = interpolate(frame, [45, 75], [0.9, 1], {
-		extrapolateLeft: "clamp",
-		extrapolateRight: "clamp",
-	});
-
-	const subtitleOpacity = interpolate(frame, [70, 95], [0, 1], {
-		extrapolateLeft: "clamp",
-		extrapolateRight: "clamp",
-	});
-
-	const logoOpacity = interpolate(frame, [90, 115], [0, 1], {
-		extrapolateLeft: "clamp",
-		extrapolateRight: "clamp",
-	});
-
-	const titleGlow = interpolate(Math.sin(frame / 14), [-1, 1], [16, 30]);
+	const ctaPulse = interpolate(Math.sin(frame / 10), [-1, 1], [16, 34]);
 
 	const outroFade = interpolate(
 		frame,
@@ -57,100 +43,72 @@ export const Scene03: React.FC = () => {
 	return (
 		<AbsoluteFill style={{ backgroundColor: "black" }}>
 			<AbsoluteFill style={{ opacity: outroFade }}>
-				<AbsoluteFill style={{ opacity: boxOpacity }}>
-					<Img
-						src={staticFile("scene-01-bg.jpg")}
-						style={{ width: "100%", height: "100%", objectFit: "cover" }}
-					/>
-				</AbsoluteFill>
-
-				{/* Soft green ambient glow, independent of the particle field. */}
+				{/* Soft green ambient glow. */}
 				<AbsoluteFill
 					style={{
-						background: `radial-gradient(circle at 50% 45%, rgba(109,255,184,${glowPulse * 0.35}) 0%, rgba(0,0,0,0) 60%)`,
+						background: `radial-gradient(circle at 50% 45%, rgba(109,255,184,${glowPulse * 0.4}) 0%, rgba(0,0,0,0) 60%)`,
 						mixBlendMode: "screen",
 					}}
 				/>
 
-				<Particles opacity={0.6} />
+				<Particles opacity={0.7} />
 
-				{/* Mask out Scene 01's baked-in "STA ARRIVANDO..." text. */}
 				<AbsoluteFill
 					style={{
-						background:
-							"linear-gradient(to bottom, rgba(0,0,0,0) 66%, rgba(0,0,0,1) 76%, rgba(0,0,0,1) 100%)",
-						opacity: maskOpacity,
+						alignItems: "center",
+						justifyContent: "center",
+						textAlign: "center",
 					}}
-				/>
-
-				<AbsoluteFill
-					style={{ alignItems: "center", textAlign: "center" }}
 				>
 					<div
 						style={{
-							position: "absolute",
-							bottom: 420,
-							width: "100%",
 							opacity: logoOpacity,
+							transform: `scale(${logoScale})`,
+							marginBottom: 36,
 						}}
 					>
 						<img
 							src={staticFile("mondoestro-logo.png")}
 							style={{
-								width: 130,
-								height: 130,
+								width: 460,
+								height: 460,
 								objectFit: "contain",
 								display: "block",
 								margin: "0 auto",
+								filter: `drop-shadow(0 0 ${glowPulse * 40}px #6dffb8)`,
 							}}
 						/>
 					</div>
 
 					<div
 						style={{
-							position: "absolute",
-							bottom: 260,
-							width: "100%",
 							opacity: titleOpacity,
-							transform: `scale(${titleScale})`,
+							fontFamily: "Arial, Helvetica, sans-serif",
+							fontWeight: 900,
+							textTransform: "uppercase",
+							color: "#eafff4",
+							fontSize: 64,
+							letterSpacing: 2,
+							textShadow: "0 0 24px #6dffb8, 0 0 60px #2fae76",
+							marginBottom: 22,
 						}}
 					>
-						<div
-							style={{
-								fontFamily: "Arial, Helvetica, sans-serif",
-								fontWeight: 900,
-								textTransform: "uppercase",
-								color: "#eafff4",
-								fontSize: 88,
-								letterSpacing: 2,
-								textShadow: `0 0 ${titleGlow}px #6dffb8, 0 0 60px #2fae76`,
-							}}
-						>
-							Storm Emerald
-						</div>
+						Storm Emerald
 					</div>
 
 					<div
 						style={{
-							position: "absolute",
-							bottom: 190,
-							width: "100%",
-							opacity: subtitleOpacity,
+							opacity: ctaOpacity,
+							fontFamily: "Arial, Helvetica, sans-serif",
+							fontWeight: 800,
+							textTransform: "uppercase",
+							color: "#c8ffe4",
+							fontSize: 40,
+							letterSpacing: 3,
+							textShadow: `0 0 ${ctaPulse}px #6dffb8`,
 						}}
 					>
-						<div
-							style={{
-								fontFamily: "Arial, Helvetica, sans-serif",
-								fontWeight: 700,
-								textTransform: "uppercase",
-								color: "#c8ffe4",
-								fontSize: 34,
-								letterSpacing: 3,
-								textShadow: "0 0 18px #6dffb8",
-							}}
-						>
-							Disponibile in pre-order
-						</div>
+						Contattami in DM
 					</div>
 				</AbsoluteFill>
 			</AbsoluteFill>
