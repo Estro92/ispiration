@@ -2,115 +2,41 @@ import {
 	AbsoluteFill,
 	Img,
 	interpolate,
-	random,
 	staticFile,
 	useCurrentFrame,
 	useVideoConfig,
 } from "remotion";
 import { Particles } from "./Particles";
 
-// Position of the Rayquaza artwork crop relative to the full box background,
-// expressed as a fraction of the frame — matches where it sits on the real box art.
-const ORIGIN = { left: "44%", top: "27%", width: "40%" };
-
-const CrackLines: React.FC<{ progress: number }> = ({ progress }) => {
-	const paths = [
-		"M 420 520 L 460 470 L 440 410 L 490 360",
-		"M 500 560 L 520 500 L 560 480 L 540 420",
-		"M 460 470 L 400 440 L 410 390",
-	];
-
-	return (
-		<svg
-			viewBox="0 0 1080 1920"
-			width="100%"
-			height="100%"
-			style={{ position: "absolute", top: 0, left: 0 }}
-		>
-			{paths.map((d, i) => {
-				const delay = i * 0.15;
-				const local = interpolate(progress, [delay, delay + 0.4], [0, 1], {
-					extrapolateLeft: "clamp",
-					extrapolateRight: "clamp",
-				});
-				return (
-					<path
-						key={i}
-						d={d}
-						fill="none"
-						stroke="#8dffc9"
-						strokeWidth={3}
-						strokeLinecap="round"
-						style={{
-							filter: "drop-shadow(0 0 6px #6dffb8)",
-							opacity: local,
-							strokeDasharray: 200,
-							strokeDashoffset: 200 * (1 - local),
-						}}
-					/>
-				);
-			})}
-		</svg>
-	);
-};
+const CTA_LINE_1 = "PRE-ORDINA DA NOI";
+const CTA_LINE_2 = "IL TUO BOX ESCLUSIVO DI RAYQUAZA";
 
 export const Scene02: React.FC = () => {
 	const frame = useCurrentFrame();
 	const { durationInFrames } = useVideoConfig();
 
-	// Slow establishing push-in, consistent with Scene 01.
+	// Same slow push-in language as Scene 01, so the two scenes read as one shot.
 	const scale = interpolate(frame, [0, durationInFrames], [1, 1.1], {
 		extrapolateRight: "clamp",
 	});
 
-	// The artwork glows before it cracks open.
-	const glowOpacity = interpolate(frame, [0, 25, 45], [0, 0.9, 0.6], {
+	// Cover Scene 01's baked-in "STA ARRIVANDO..." text with a soft fade to black.
+	const maskOpacity = interpolate(frame, [0, 20], [0, 1], {
 		extrapolateRight: "clamp",
 	});
 
-	const crackProgress = interpolate(frame, [20, 60], [0, 1], {
+	const textOpacity = interpolate(frame, [18, 45], [0, 1], {
 		extrapolateLeft: "clamp",
 		extrapolateRight: "clamp",
 	});
-
-	// Rayquaza emerges: grows out of the box artwork and drifts toward camera.
-	const emergeStart = 45;
-	const emergeEnd = 100;
-	const emergeProgress = interpolate(frame, [emergeStart, emergeEnd], [0, 1], {
+	const textY = interpolate(frame, [18, 45], [24, 0], {
 		extrapolateLeft: "clamp",
 		extrapolateRight: "clamp",
 	});
-	const emergeScale = interpolate(emergeProgress, [0, 1], [1, 2.6]);
-	const emergeY = interpolate(emergeProgress, [0, 1], [0, -220]);
-	const emergeOpacity = interpolate(frame, [emergeStart, emergeStart + 10], [0, 1], {
-		extrapolateLeft: "clamp",
-		extrapolateRight: "clamp",
-	});
-
-	// "Made of emerald energy" -> crystallizes into full, realistic color.
-	const materialize = interpolate(frame, [emergeStart, emergeEnd + 15], [0, 1], {
-		extrapolateLeft: "clamp",
-		extrapolateRight: "clamp",
-	});
-	const saturate = interpolate(materialize, [0, 1], [0, 1.3]);
-	const brightness = interpolate(materialize, [0, 1], [2.2, 1]);
-	const glowStrength = interpolate(materialize, [0, 1], [40, 6]);
-
-	// Roar: a quick, deterministic camera shake plus a flash.
-	const roarStart = 100;
-	const roarEnd = 118;
-	const inRoar = frame >= roarStart && frame <= roarEnd;
-	const shakeX = inRoar
-		? (random(`shake-x-${frame}`) - 0.5) * 18
-		: 0;
-	const shakeY = inRoar
-		? (random(`shake-y-${frame}`) - 0.5) * 18
-		: 0;
-	const roarFlash = interpolate(
-		frame,
-		[roarStart, roarStart + 4, roarEnd],
-		[0, 0.5, 0],
-		{ extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+	const glowPulse = interpolate(
+		Math.sin(frame / 12),
+		[-1, 1],
+		[14, 26],
 	);
 
 	const outroFade = interpolate(
@@ -125,7 +51,7 @@ export const Scene02: React.FC = () => {
 			<AbsoluteFill
 				style={{
 					opacity: outroFade,
-					transform: `scale(${scale}) translate(${shakeX}px, ${shakeY}px)`,
+					transform: `scale(${scale})`,
 				}}
 			>
 				<Img
@@ -133,43 +59,63 @@ export const Scene02: React.FC = () => {
 					style={{ width: "100%", height: "100%", objectFit: "cover" }}
 				/>
 
-				{/* Emerald glow pulsing on the artwork right before it cracks open. */}
+				<Particles opacity={0.7} />
+
+				{/* Mask out Scene 01's baked-in text before the new CTA takes its place. */}
 				<AbsoluteFill
 					style={{
-						background: `radial-gradient(circle at 62% 38%, rgba(109,255,184,${glowOpacity}) 0%, rgba(109,255,184,0) 35%)`,
-						mixBlendMode: "screen",
+						background:
+							"linear-gradient(to bottom, rgba(0,0,0,0) 68%, rgba(0,0,0,1) 78%, rgba(0,0,0,1) 100%)",
+						opacity: maskOpacity,
 					}}
 				/>
 
-				<CrackLines progress={crackProgress} />
-
-				{/* Rayquaza emerging from the printed artwork. */}
-				<div
+				<AbsoluteFill
 					style={{
-						position: "absolute",
-						left: ORIGIN.left,
-						top: ORIGIN.top,
-						width: ORIGIN.width,
-						transform: `translate(-50%, -50%) translateY(${emergeY}px) scale(${emergeScale})`,
-						opacity: emergeOpacity,
+						alignItems: "center",
+						justifyContent: "flex-end",
+						paddingBottom: "9%",
+						textAlign: "center",
 					}}
 				>
-					<img
-						src={staticFile("rayquaza-emerge.png")}
+					<div
 						style={{
-							width: "100%",
-							display: "block",
-							filter: `saturate(${saturate}) brightness(${brightness}) drop-shadow(0 0 ${glowStrength}px #6dffb8)`,
+							opacity: textOpacity,
+							transform: `translateY(${textY}px)`,
+							padding: "0 6%",
 						}}
-					/>
-				</div>
-
-				<Particles opacity={interpolate(frame, [20, 60], [0.3, 0.9], { extrapolateRight: "clamp" })} />
-
-				{/* Roar flash. */}
-				<AbsoluteFill
-					style={{ backgroundColor: "#eafff2", opacity: roarFlash }}
-				/>
+					>
+						<div
+							style={{
+								fontFamily: "Arial, Helvetica, sans-serif",
+								fontWeight: 800,
+								textTransform: "uppercase",
+								color: "#eafff4",
+								fontSize: 58,
+								lineHeight: 1.15,
+								letterSpacing: 1,
+								textShadow: `0 0 ${glowPulse}px #6dffb8, 0 0 46px #2fae76`,
+							}}
+						>
+							{CTA_LINE_1}
+						</div>
+						<div
+							style={{
+								fontFamily: "Arial, Helvetica, sans-serif",
+								fontWeight: 800,
+								textTransform: "uppercase",
+								color: "#eafff4",
+								fontSize: 40,
+								lineHeight: 1.2,
+								letterSpacing: 0.5,
+								marginTop: 10,
+								textShadow: `0 0 ${glowPulse}px #6dffb8, 0 0 46px #2fae76`,
+							}}
+						>
+							{CTA_LINE_2}
+						</div>
+					</div>
+				</AbsoluteFill>
 			</AbsoluteFill>
 		</AbsoluteFill>
 	);
