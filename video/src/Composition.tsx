@@ -31,19 +31,10 @@ export const MyComposition: React.FC<{ durationInFrames?: number }> = ({
 		extrapolateRight: "clamp",
 	});
 
-	// Final fade to black at the very end of the scene, for a clean cut into the next one.
-	const outroFade = interpolate(
-		frame,
-		[durationInFrames - 12, durationInFrames],
-		[1, 0],
-		{ extrapolateLeft: "clamp" },
-	);
-
 	return (
 		<AbsoluteFill style={{ backgroundColor: "black" }}>
 			<AbsoluteFill
 				style={{
-					opacity: outroFade,
 					transform: `scale(${scale})`,
 				}}
 			>

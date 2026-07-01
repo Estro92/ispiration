@@ -18,8 +18,9 @@ export const Scene02: React.FC<{ durationInFrames?: number }> = ({
 	const { durationInFrames: compositionDuration } = useVideoConfig();
 	const durationInFrames = durationProp ?? compositionDuration;
 
-	// Same slow push-in language as Scene 01, so the two scenes read as one shot.
-	const scale = interpolate(frame, [0, durationInFrames], [1, 1.1], {
+	// Continues Scene 01's push-in from where it left off (1.12), so the cut
+	// into this scene reads as one continuous shot instead of a zoom reset.
+	const scale = interpolate(frame, [0, durationInFrames], [1.12, 1.24], {
 		extrapolateRight: "clamp",
 	});
 
