@@ -7,6 +7,42 @@ import {
 } from "remotion";
 import { Particles } from "./Particles";
 
+const InstagramIcon: React.FC<{ size: number; glow: number }> = ({
+	size,
+	glow,
+}) => (
+	<svg
+		width={size}
+		height={size}
+		viewBox="0 0 24 24"
+		fill="none"
+		style={{ filter: `drop-shadow(0 0 ${glow}px #6dffb8)` }}
+	>
+		<rect x={2} y={2} width={20} height={20} rx={6} stroke="#c8ffe4" strokeWidth={1.8} />
+		<circle cx={12} cy={12} r={4.6} stroke="#c8ffe4" strokeWidth={1.8} />
+		<circle cx={17.2} cy={6.8} r={1.15} fill="#c8ffe4" />
+	</svg>
+);
+
+const FacebookIcon: React.FC<{ size: number; glow: number }> = ({
+	size,
+	glow,
+}) => (
+	<svg
+		width={size}
+		height={size}
+		viewBox="0 0 24 24"
+		fill="none"
+		style={{ filter: `drop-shadow(0 0 ${glow}px #6dffb8)` }}
+	>
+		<circle cx={12} cy={12} r={10} stroke="#c8ffe4" strokeWidth={1.8} />
+		<path
+			d="M13.5 21V13H16L16.4 10H13.5V8.2C13.5 7.35 13.73 6.77 14.95 6.77H16.5V4.07C16.23 4.03 15.32 3.95 14.25 3.95C12.03 3.95 10.5 5.31 10.5 7.8V10H8V13H10.5V21H13.5Z"
+			fill="#c8ffe4"
+		/>
+	</svg>
+);
+
 export const Scene03: React.FC<{ durationInFrames?: number }> = ({
 	durationInFrames: durationProp,
 }) => {
@@ -73,8 +109,8 @@ export const Scene03: React.FC<{ durationInFrames?: number }> = ({
 						<img
 							src={staticFile("mondoestro-logo.png")}
 							style={{
-								width: 460,
-								height: 460,
+								width: 620,
+								height: 620,
 								objectFit: "contain",
 								display: "block",
 								margin: "0 auto",
@@ -102,16 +138,27 @@ export const Scene03: React.FC<{ durationInFrames?: number }> = ({
 					<div
 						style={{
 							opacity: ctaOpacity,
-							fontFamily: "Arial, Helvetica, sans-serif",
-							fontWeight: 800,
-							textTransform: "uppercase",
-							color: "#c8ffe4",
-							fontSize: 40,
-							letterSpacing: 3,
-							textShadow: `0 0 ${ctaPulse}px #6dffb8`,
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							gap: 18,
 						}}
 					>
-						Contattami in DM
+						<InstagramIcon size={38} glow={ctaPulse} />
+						<div
+							style={{
+								fontFamily: "Arial, Helvetica, sans-serif",
+								fontWeight: 800,
+								textTransform: "uppercase",
+								color: "#c8ffe4",
+								fontSize: 40,
+								letterSpacing: 3,
+								textShadow: `0 0 ${ctaPulse}px #6dffb8`,
+							}}
+						>
+							Contattami in DM
+						</div>
+						<FacebookIcon size={38} glow={ctaPulse} />
 					</div>
 				</AbsoluteFill>
 			</AbsoluteFill>
