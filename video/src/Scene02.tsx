@@ -73,11 +73,10 @@ export const Scene02: React.FC = () => {
 				<AbsoluteFill
 					style={{
 						alignItems: "center",
-						justifyContent: "flex-end",
-						paddingBottom: "16%",
 						textAlign: "center",
 					}}
 				>
+					<div style={{ position: "absolute", bottom: 380, width: "100%" }}>
 					<div
 						style={{
 							opacity: textOpacity,
@@ -114,6 +113,7 @@ export const Scene02: React.FC = () => {
 						>
 							{CTA_LINE_2}
 						</div>
+					</div>
 					</div>
 				</AbsoluteFill>
 			</AbsoluteFill>
