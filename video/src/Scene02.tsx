@@ -11,9 +11,12 @@ import { Particles } from "./Particles";
 const CTA_LINE_1 = "PRE-ORDINA DA NOI";
 const CTA_LINE_2 = "IL TUO BOX ESCLUSIVO DI RAYQUAZA";
 
-export const Scene02: React.FC = () => {
+export const Scene02: React.FC<{ durationInFrames?: number }> = ({
+	durationInFrames: durationProp,
+}) => {
 	const frame = useCurrentFrame();
-	const { durationInFrames } = useVideoConfig();
+	const { durationInFrames: compositionDuration } = useVideoConfig();
+	const durationInFrames = durationProp ?? compositionDuration;
 
 	// Same slow push-in language as Scene 01, so the two scenes read as one shot.
 	const scale = interpolate(frame, [0, durationInFrames], [1, 1.1], {

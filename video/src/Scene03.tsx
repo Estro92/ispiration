@@ -7,9 +7,12 @@ import {
 } from "remotion";
 import { Particles } from "./Particles";
 
-export const Scene03: React.FC = () => {
+export const Scene03: React.FC<{ durationInFrames?: number }> = ({
+	durationInFrames: durationProp,
+}) => {
 	const frame = useCurrentFrame();
-	const { durationInFrames } = useVideoConfig();
+	const { durationInFrames: compositionDuration } = useVideoConfig();
+	const durationInFrames = durationProp ?? compositionDuration;
 
 	const glowPulse = interpolate(Math.sin(frame / 20), [-1, 1], [0.35, 0.75]);
 

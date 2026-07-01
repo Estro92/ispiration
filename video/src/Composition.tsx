@@ -8,9 +8,12 @@ import {
 } from "remotion";
 import { Particles } from "./Particles";
 
-export const MyComposition: React.FC = () => {
+export const MyComposition: React.FC<{ durationInFrames?: number }> = ({
+	durationInFrames: durationProp,
+}) => {
 	const frame = useCurrentFrame();
-	const { durationInFrames } = useVideoConfig();
+	const { durationInFrames: compositionDuration } = useVideoConfig();
+	const durationInFrames = durationProp ?? compositionDuration;
 
 	// Darkness holds, then the box slowly reveals under emerald light.
 	const revealOpacity = interpolate(frame, [20, 70], [0, 1], {
