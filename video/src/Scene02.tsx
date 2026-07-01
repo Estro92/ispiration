@@ -74,7 +74,7 @@ export const Scene02: React.FC = () => {
 					style={{
 						alignItems: "center",
 						justifyContent: "flex-end",
-						paddingBottom: "9%",
+						paddingBottom: "16%",
 						textAlign: "center",
 					}}
 				>
